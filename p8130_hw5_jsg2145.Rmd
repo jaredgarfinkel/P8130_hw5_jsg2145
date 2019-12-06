@@ -198,7 +198,7 @@ for (i in 1:7) {
 
 ```{r}
 df = df %>% 
-  select(-population, -area, life_exp, everything()) %>% 
+  select(life_exp, everything(), -population, -area) %>% 
   data.frame()
 
 leaps(x = df[,2:8], y = df[,1], nbest = 2, method = "Cp")
@@ -216,9 +216,22 @@ b <- regsubsets(life_exp ~ ., data=df)
 par(mar=c(4,4,1,1))
 par(mfrow=c(1,2))
 
-plot(2:9, rs$cp, xlab="No of parameters", ylab="Cp Statistic")
+plot(2:8, rs$cp, xlab="No of parameters", ylab="Cp Statistic")
 abline(0,1)
 
-plot(2:9, rs$adjr2, xlab="No of parameters", ylab="Adj R2")
+plot(2:8, rs$adjr2, xlab="No of parameters", ylab="Adj R2")
+```
+
+```{r}
+# AIC of the 6-predictor model:
+multi.fit4 <- lm(life_exp ~ murder + hs_grad + ln_pop + frost, data=df)
+AIC(multi.fit4)
+
+# BIC
+AIC(multi.fit4, k = log(length(pull(df, life_exp))))
+
+# AIC of the 4-predictor model:
+multi.fit5 <- lm(life_exp ~ murder + hs_grad + ln_pop + frost + ln_area, data = df)
+AIC(multi.fit5)
 ```
 
