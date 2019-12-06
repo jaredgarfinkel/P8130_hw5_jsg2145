@@ -1,0 +1,55 @@
+---
+title: "P8130_hw5_jsg2145"
+author: "Jared Garfinkel"
+date: "12/6/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(viridis)
+library(faraway)
+library(arsenal)
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+	fig.width = 8, 
+  fig.height = 6,
+  out.width = "90%"
+)
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+``````
+
+```{r}
+states <- attributes(state.x77) %>% 
+  .[[2]] %>% 
+  .[[1]]
+
+df <- cbind(states, state.x77) %>% 
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  mutate(population = as.numeric(population),
+         income = as.numeric(income),
+         illiteracy = as.numeric(illiteracy),
+         life_exp = as.numeric(life_exp),
+         murder = as.numeric(murder),
+         hs_grad = as.numeric(hs_grad),
+         frost = as.numeric(frost),
+         area = as.numeric(area))
+```
+
+```{r}
+tab1 <- tableby( ~ population + income + illiteracy + life_exp + murder + hs_grad + frost + area, data=df)
+
+my_labels <- list(population = "Population", income = "Per Capita Income", illiteracy = "Illiteracy, Percent of Population", life_exp = "Life Expectancy in Years", murder = "Murder Rate per 100,000", hs_grad = "Percent High-School Graduates", frost = "Mean Number of Days with Minimum Temp Below Freezing", area = "Land Area (sq mi)")
+
+
+
+```
+
