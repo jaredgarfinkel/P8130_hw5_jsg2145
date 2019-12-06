@@ -42,14 +42,154 @@ df <- cbind(states, state.x77) %>%
          hs_grad = as.numeric(hs_grad),
          frost = as.numeric(frost),
          area = as.numeric(area))
+
+str(df)
 ```
 
 ```{r}
 tab1 <- tableby( ~ population + income + illiteracy + life_exp + murder + hs_grad + frost + area, data=df)
 
-my_labels <- list(population = "Population", income = "Per Capita Income", illiteracy = "Illiteracy, Percent of Population", life_exp = "Life Expectancy in Years", murder = "Murder Rate per 100,000", hs_grad = "Percent High-School Graduates", frost = "Mean Number of Days with Minimum Temp Below Freezing", area = "Land Area (sq mi)")
+my_labels <- list(population = "Population", 
+                  income = "Per Capita Income", 
+                  illiteracy = "Illiteracy, Percent of Population", 
+                  life_exp = "Life Expectancy in Years", 
+                  murder = "Murder Rate per 100,000", 
+                  hs_grad = "Percent High-School Graduates", 
+                  frost = "Mean Number of Days with Minimum Temp Below Freezing", 
+                  area = "Land Area (sq mi)")
 
+my_controls <- tableby.control(
+               total = T,
+               test = F,  # No test p-values yet
+               numeric.stats = c("meansd", "medianq1q3", "range"),
+               stats.labels = list(
+               meansd = "Mean (SD)",
+               medianq1q3 = "Median (Q1, Q3)",
+               range = "Min - Max"))
 
+tab2 <- tableby( ~ population + income + illiteracy + life_exp + murder + hs_grad + frost + area, data=df, control=my_controls)
+
+summary(tab2, title = "Descriptive Statistics: Life Expectancy Data", labelTranslations = my_labels, text=T) %>% 
+  data.frame() %>% 
+  knitr::kable()
 
 ```
 
+```{r}
+df %>% 
+  ggplot(aes(x = life_exp)) + 
+  geom_histogram(bins = 10)
+```
+```{r}
+skimr::skim(df)
+```
+
+```{r}
+df %>% 
+  ggplot(aes(x = frost)) +
+  geom_histogram(bins = 10)
+```
+
+ 
+```{r}
+df %>% 
+  ggplot(aes(x = log(population))) +
+  geom_histogram(bins = 10)
+```
+
+```{r}
+df %>% 
+  ggplot(aes(x = income, y = life_exp)) +
+  geom_point()
+```
+
+```{r}
+df %>% 
+  ggplot(aes(x = illiteracy, y = life_exp)) +
+  geom_point()
+```
+
+```{r}
+df <- df %>% 
+  mutate(ln_pop = log(population),
+         ln_area = log(area))
+```
+
+```{r}
+fit1 <- lm(life_exp ~ population, data = df)
+broom::tidy(fit1)$p.value[2]
+fit2 <- lm(life_exp ~ murder, data = df)
+broom::tidy(fit2)$p.value[2]
+fit3 <- lm(life_exp ~ income, data = df)
+broom::tidy(fit3)$p.value[2]
+fit4 <- lm(life_exp ~ illiteracy, data = df)
+broom::tidy(fit4)$p.value[2]
+fit5 <- lm(life_exp ~ hs_grad, data = df)
+broom::tidy(fit5)$p.value[2]
+fit6 <- lm(life_exp ~ frost, data =df)
+broom::tidy(fit6)$p.value[2]
+fit7 <- lm(life_exp ~ area, data = df)
+broom::tidy(fit7)$p.value[2]
+fit8 <- lm(life_exp ~ log(population), data = df)
+broom::tidy(fit8)$p.value[2]
+fit9 <- lm(life_exp ~ log(area), data = df)
+broom::tidy(fit9)$p.value[2]
+```
+
+```{r}
+forward1 <- update(fit2, . ~ . + population)
+
+fit_back <- lm(life_exp ~ . -states -population -area, data = df)
+broom::tidy(fit_back) ## remove income
+fit_back2 <- lm(life_exp ~ . -states -population -area -income, data = df)
+broom::tidy(fit_back2) ## remove illiteracy
+fit_back3 <- lm(life_exp ~ . -states -population -area -income -illiteracy, data = df)
+broom::tidy(fit_back3) ## remove ln_area
+fit_back3 <- lm(life_exp ~ . -states -population -area -income -illiteracy -ln_area, data = df)
+broom::tidy(fit_back3) ## remove
+
+vif(fit_back)
+summary(fit_back3)
+
+fit_states <- lm(life_exp ~ states, data = df)
+anova(fit_states)
+```
+
+```{r}
+df %>% 
+  ggplot(aes(x = illiteracy, y = hs_grad)) +
+  geom_point()
+```
+
+```{r}
+fit <- lm(life_exp ~ hs_grad + illiteracy, data = df)
+vif(fit)
+summary(fit)
+
+```
+
+
+
+```{r}
+model1 <- step(fit1, direction = "both")
+model2 <- step(fit1, direction = "backward")
+model3 <- step(fit_back, direction = "forward")
+```
+
+```{r}
+output = vector(mode = "list", length = 7)
+
+df = df %>% 
+  select(-states)
+
+for (i in 1:7) {
+  output[[i]] = lm(life_exp ~ df[[i]], data = df) %>%
+    broom::tidy() %>% 
+    tibble(
+      variable = colnames(df[i]),
+      pvalue = .$p.value[[2]]
+    ) %>% 
+    select(variable, pvalue) %>% 
+    bind_rows()
+}
+```

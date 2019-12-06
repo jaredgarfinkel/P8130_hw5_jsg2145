@@ -1,0 +1,223 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={P8130\_hw5\_jsg2145},
+            pdfauthor={Jared Garfinkel},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{P8130\_hw5\_jsg2145}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Jared Garfinkel}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{12/6/2019}
+
+
+\begin{document}
+\maketitle
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{states <-}\StringTok{ }\KeywordTok{attributes}\NormalTok{(state.x77) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{.[[}\DecValTok{2}\NormalTok{]] }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{.[[}\DecValTok{1}\NormalTok{]]}
+
+\NormalTok{df <-}\StringTok{ }\KeywordTok{cbind}\NormalTok{(states, state.x77) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{as_tibble}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{janitor}\OperatorTok{::}\KeywordTok{clean_names}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{population =} \KeywordTok{as.numeric}\NormalTok{(population),}
+         \DataTypeTok{income =} \KeywordTok{as.numeric}\NormalTok{(income),}
+         \DataTypeTok{illiteracy =} \KeywordTok{as.numeric}\NormalTok{(illiteracy),}
+         \DataTypeTok{life_exp =} \KeywordTok{as.numeric}\NormalTok{(life_exp),}
+         \DataTypeTok{murder =} \KeywordTok{as.numeric}\NormalTok{(murder),}
+         \DataTypeTok{hs_grad =} \KeywordTok{as.numeric}\NormalTok{(hs_grad),}
+         \DataTypeTok{frost =} \KeywordTok{as.numeric}\NormalTok{(frost),}
+         \DataTypeTok{area =} \KeywordTok{as.numeric}\NormalTok{(area))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tab1 <-}\StringTok{ }\KeywordTok{tableby}\NormalTok{( }\OperatorTok{~}\StringTok{ }\NormalTok{population }\OperatorTok{+}\StringTok{ }\NormalTok{income }\OperatorTok{+}\StringTok{ }\NormalTok{illiteracy }\OperatorTok{+}\StringTok{ }\NormalTok{life_exp }\OperatorTok{+}\StringTok{ }\NormalTok{murder }\OperatorTok{+}\StringTok{ }\NormalTok{hs_grad }\OperatorTok{+}\StringTok{ }\NormalTok{frost }\OperatorTok{+}\StringTok{ }\NormalTok{area, }\DataTypeTok{data=}\NormalTok{df)}
+
+\NormalTok{my_labels <-}\StringTok{ }\KeywordTok{list}\NormalTok{(}\DataTypeTok{population =} \StringTok{"Population"}\NormalTok{, }
+                  \DataTypeTok{income =} \StringTok{"Per Capita Income"}\NormalTok{, }
+                  \DataTypeTok{illiteracy =} \StringTok{"Illiteracy, Percent of Population"}\NormalTok{, }
+                  \DataTypeTok{life_exp =} \StringTok{"Life Expectancy in Years"}\NormalTok{, }
+                  \DataTypeTok{murder =} \StringTok{"Murder Rate per 100,000"}\NormalTok{, }
+                  \DataTypeTok{hs_grad =} \StringTok{"Percent High-School Graduates"}\NormalTok{, }
+                  \DataTypeTok{frost =} \StringTok{"Mean Number of Days with Minimum Temp Below Freezing"}\NormalTok{, }
+                  \DataTypeTok{area =} \StringTok{"Land Area (sq mi)"}\NormalTok{)}
+
+\NormalTok{my_controls <-}\StringTok{ }\KeywordTok{tableby.control}\NormalTok{(}
+               \DataTypeTok{total =}\NormalTok{ T,}
+               \DataTypeTok{test =}\NormalTok{ F,  }\CommentTok{# No test p-values yet}
+               \DataTypeTok{numeric.stats =} \KeywordTok{c}\NormalTok{(}\StringTok{"meansd"}\NormalTok{, }\StringTok{"medianq1q3"}\NormalTok{, }\StringTok{"range"}\NormalTok{),}
+               \DataTypeTok{stats.labels =} \KeywordTok{list}\NormalTok{(}
+               \DataTypeTok{meansd =} \StringTok{"Mean (SD)"}\NormalTok{,}
+               \DataTypeTok{medianq1q3 =} \StringTok{"Median (Q1, Q3)"}\NormalTok{,}
+               \DataTypeTok{range =} \StringTok{"Min - Max"}\NormalTok{))}
+
+\NormalTok{tab2 <-}\StringTok{ }\KeywordTok{tableby}\NormalTok{( }\OperatorTok{~}\StringTok{ }\NormalTok{population }\OperatorTok{+}\StringTok{ }\NormalTok{income }\OperatorTok{+}\StringTok{ }\NormalTok{illiteracy }\OperatorTok{+}\StringTok{ }\NormalTok{life_exp }\OperatorTok{+}\StringTok{ }\NormalTok{murder }\OperatorTok{+}\StringTok{ }\NormalTok{hs_grad }\OperatorTok{+}\StringTok{ }\NormalTok{frost }\OperatorTok{+}\StringTok{ }\NormalTok{area, }\DataTypeTok{data=}\NormalTok{df, }\DataTypeTok{control=}\NormalTok{my_controls)}
+
+\KeywordTok{summary}\NormalTok{(tab2, }\DataTypeTok{title =} \StringTok{"Descriptive Statistics: Life Expectancy Data"}\NormalTok{, }\DataTypeTok{labelTranslations =}\NormalTok{ my_labels, }\DataTypeTok{text=}\NormalTok{T) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{data.frame}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{knitr}\OperatorTok{::}\KeywordTok{kable}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+Var.1 & Overall..N.50.\tabularnewline
+\midrule
+\endhead
+Population &\tabularnewline
+- Mean (SD) & 4246.420 (4464.491)\tabularnewline
+- Median (Q1, Q3) & 2838.500 (1079.500, 4968.500)\tabularnewline
+- Min - Max & 365.000 - 21198.000\tabularnewline
+Per Capita Income &\tabularnewline
+- Mean (SD) & 4435.800 (614.470)\tabularnewline
+- Median (Q1, Q3) & 4519.000 (3992.750, 4813.500)\tabularnewline
+- Min - Max & 3098.000 - 6315.000\tabularnewline
+Illiteracy, Percent of Population &\tabularnewline
+- Mean (SD) & 1.170 (0.610)\tabularnewline
+- Median (Q1, Q3) & 0.950 (0.625, 1.575)\tabularnewline
+- Min - Max & 0.500 - 2.800\tabularnewline
+Life Expectancy in Years &\tabularnewline
+- Mean (SD) & 70.879 (1.342)\tabularnewline
+- Median (Q1, Q3) & 70.675 (70.117, 71.893)\tabularnewline
+- Min - Max & 67.960 - 73.600\tabularnewline
+Murder Rate per 100,000 &\tabularnewline
+- Mean (SD) & 7.378 (3.692)\tabularnewline
+- Median (Q1, Q3) & 6.850 (4.350, 10.675)\tabularnewline
+- Min - Max & 1.400 - 15.100\tabularnewline
+Percent High-School Graduates &\tabularnewline
+- Mean (SD) & 53.108 (8.077)\tabularnewline
+- Median (Q1, Q3) & 53.250 (48.050, 59.150)\tabularnewline
+- Min - Max & 37.800 - 67.300\tabularnewline
+Mean Number of Days with Minimum Temp Below Freezing &\tabularnewline
+- Mean (SD) & 104.460 (51.981)\tabularnewline
+- Median (Q1, Q3) & 114.500 (66.250, 139.750)\tabularnewline
+- Min - Max & 0.000 - 188.000\tabularnewline
+Land Area (sq mi) &\tabularnewline
+- Mean (SD) & 70735.880 (85327.300)\tabularnewline
+- Median (Q1, Q3) & 54277.000 (36985.250, 81162.500)\tabularnewline
+- Min - Max & 1049.000 - 566432.000\tabularnewline
+\bottomrule
+\end{longtable}
+
+
+\end{document}
