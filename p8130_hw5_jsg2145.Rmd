@@ -11,6 +11,7 @@ library(viridis)
 library(faraway)
 library(arsenal)
 library(leaps)
+library(caret)
 knitr::opts_chunk$set(
 	echo = TRUE,
 	warning = FALSE,
@@ -233,5 +234,58 @@ AIC(multi.fit4, k = log(length(pull(df, life_exp))))
 # AIC of the 4-predictor model:
 multi.fit5 <- lm(life_exp ~ murder + hs_grad + ln_pop + frost + ln_area, data = df)
 AIC(multi.fit5)
+
+# 4-predictor model is the best
+```
+
+```{r}
+par(mfrow =c(2, 2))
+plot(multi.fit4)
+
+```
+
+```{r}
+influence.measures(multi.fit4)
+```
+
+
+```{r}
+df.no11 <- df[-11,]
+
+multi.fit2 <- lm(life_exp ~ murder + hs_grad + ln_pop + frost, data = df.no11)
+
+par(mfrow =c(2,2))
+plot(multi.fit2)
+```
+
+```{r}
+summary(multi.fit2)
+summary(multi.fit4)
+```
+
+This is evidence that the influential point at observation 11 causes a variable, frost, to become not significant.
+
+```{r}
+set.seed(1)
+data_train<-trainControl(method="cv", number=10)
+```
+
+```{r}
+model_caret <- train(life_exp ~ murder + hs_grad + ln_pop + frost,
+                   data=df,
+                   trControl=data_train,
+                   method='lm',
+                   na.action=na.pass)
+
+model_caret
+
+model_caret$finalModel
+
+model_caret$resample
+
+sd(model_caret$resample$Rsquared)
+
+full_model <- lm(life_exp ~ murder + hs_grad + ln_pop + frost, data = df)
+summary(full_model)
 ```
 
