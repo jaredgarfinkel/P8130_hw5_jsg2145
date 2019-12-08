@@ -637,9 +637,103 @@ broom::tidy(fit8)$p.value[2]</code></pre>
 <pre class="r"><code>fit9 &lt;- lm(life_exp ~ log(area), data = df)
 broom::tidy(fit9)$p.value[2]</code></pre>
 <pre><code>## [1] 0.4526747</code></pre>
-<pre class="r"><code>forward1 &lt;- update(fit2, . ~ . + population)
+<pre class="r"><code># murder has the lowest p-value
 
-fit_back &lt;- lm(life_exp ~ . -states -population -area, data = df)
+forward1&lt;-lm(life_exp ~ murder, data = df)
+broom::tidy(forward1)</code></pre>
+<pre><code>## # A tibble: 2 x 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)   73.0      0.270     270.   4.72e-78
+## 2 murder        -0.284    0.0328     -8.66 2.26e-11</code></pre>
+<pre class="r"><code>fit1 &lt;- update(forward1, . ~ . + income)
+broom::tidy(fit1)$p.value[3]</code></pre>
+<pre><code>## [1] 0.06663619</code></pre>
+<pre class="r"><code>fit2 &lt;- update(forward1, . ~ . + ln_pop)
+broom::tidy(fit2)$p.value[3]</code></pre>
+<pre><code>## [1] 0.04008758</code></pre>
+<pre class="r"><code>fit3 &lt;- update(forward1, . ~ . + illiteracy)
+broom::tidy(fit3)$p.value[3]</code></pre>
+<pre><code>## [1] 0.5429104</code></pre>
+<pre class="r"><code>fit4 &lt;- update(forward1, . ~ . + hs_grad)
+broom::tidy(fit4)$p.value[3] </code></pre>
+<pre><code>## [1] 0.009088366</code></pre>
+<pre class="r"><code>fit5 &lt;- update(forward1, . ~ . + frost)
+broom::tidy(fit5)$p.value[3] </code></pre>
+<pre><code>## [1] 0.03520523</code></pre>
+<pre class="r"><code>fit6 &lt;- update(forward1, . ~ . + ln_area)
+broom::tidy(fit6)$p.value[3] </code></pre>
+<pre><code>## [1] 0.1561891</code></pre>
+<pre class="r"><code># next lowest p-value is hs_grad
+
+forward2 &lt;- update(forward1, . ~ . + hs_grad)
+tidy(forward2)</code></pre>
+<pre><code>## # A tibble: 3 x 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)  70.3       1.02       69.2  5.91e-49
+## 2 murder       -0.237     0.0353     -6.72 2.18e- 8
+## 3 hs_grad       0.0439    0.0161      2.72 9.09e- 3</code></pre>
+<pre class="r"><code>fit1 &lt;- update(forward2, . ~ . + ln_pop)
+tidy(fit1)$p.value[4] </code></pre>
+<pre><code>## [1] 0.005516215</code></pre>
+<pre class="r"><code>fit2 &lt;- update(forward2, . ~ . + income)
+tidy(fit2)$p.value[4] </code></pre>
+<pre><code>## [1] 0.6924184</code></pre>
+<pre class="r"><code>fit3 &lt;- update(forward2, . ~ . + illiteracy)
+tidy(fit3)$p.value[4] </code></pre>
+<pre><code>## [1] 0.4094209</code></pre>
+<pre class="r"><code>fit4 &lt;- update(forward2, . ~ . + frost)
+tidy(fit4)$p.value[4] </code></pre>
+<pre><code>## [1] 0.006987727</code></pre>
+<pre class="r"><code>fit5 &lt;- update(forward2, . ~ . + ln_area)
+tidy(fit5)$p.value[4] </code></pre>
+<pre><code>## [1] 0.6634469</code></pre>
+<pre class="r"><code># next lowest p-value is the log of the population
+
+forward3 = update(forward2, . ~ . + ln_pop)
+tidy(forward3)</code></pre>
+<pre><code>## # A tibble: 4 x 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)  67.5       1.34       50.4  6.97e-42
+## 2 murder       -0.261     0.0338     -7.73 7.48e-10
+## 3 hs_grad       0.0519    0.0152      3.41 1.38e- 3
+## 4 ln_pop        0.322     0.110       2.91 5.52e- 3</code></pre>
+<pre class="r"><code>fit1 &lt;- update(forward3, . ~ . + income)
+tidy(fit1)$p.value[5]</code></pre>
+<pre><code>## [1] 0.6469633</code></pre>
+<pre class="r"><code>fit2 &lt;- update(forward3, . ~ . + illiteracy)
+tidy(fit2)$p.value[5]</code></pre>
+<pre><code>## [1] 0.1567269</code></pre>
+<pre class="r"><code>fit3 &lt;- update(forward3, . ~ . + frost)
+tidy(fit3)$p.value[5]</code></pre>
+<pre><code>## [1] 0.04277937</code></pre>
+<pre class="r"><code>fit4 &lt;- update(forward3, . ~ . + ln_area)
+tidy(fit4)$p.value[5]</code></pre>
+<pre><code>## [1] 0.7573163</code></pre>
+<pre class="r"><code># next lowest p-value is frost
+
+forward4 = update(forward3, . ~ . + frost)
+tidy(forward4)</code></pre>
+<pre><code>## # A tibble: 5 x 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept) 68.7       1.42        48.5  1.70e-40
+## 2 murder      -0.290     0.0354      -8.18 1.87e-10
+## 3 hs_grad      0.0546    0.0148       3.70 5.91e- 4
+## 4 ln_pop       0.247     0.113        2.19 3.35e- 2
+## 5 frost       -0.00517   0.00248     -2.08 4.28e- 2</code></pre>
+<pre class="r"><code>fit1 &lt;- update(forward4, . ~ . + income)
+tidy(fit1)$p.value[6] # 0.8868104</code></pre>
+<pre><code>## [1] 0.8868104</code></pre>
+<pre class="r"><code>fit2 &lt;- update(forward4, . ~ . + illiteracy)
+tidy(fit2)$p.value[6] # 0.7542022</code></pre>
+<pre><code>## [1] 0.7542022</code></pre>
+<pre class="r"><code>fit3 &lt;- update(forward4, . ~ . + ln_area)
+tidy(fit3)$p.value[6] # 0.5212581</code></pre>
+<pre><code>## [1] 0.5212581</code></pre>
+<pre class="r"><code>fit_back &lt;- lm(life_exp ~ . -states -population -area, data = df)
 broom::tidy(fit_back) ## remove income</code></pre>
 <pre><code>## # A tibble: 8 x 5
 ##   term          estimate std.error statistic  p.value
@@ -750,29 +844,48 @@ vif(fit)</code></pre>
 ## Multiple R-squared:  0.4136, Adjusted R-squared:  0.3886 
 ## F-statistic: 16.57 on 2 and 47 DF,  p-value: 3.574e-06</code></pre>
 <pre class="r"><code>model1 &lt;- step(fit1, direction = &quot;both&quot;)</code></pre>
-<pre><code>## Start:  AIC=32.2
-## life_exp ~ population
+<pre><code>## Start:  AIC=-27.02
+## life_exp ~ murder + hs_grad + ln_pop + frost + income
 ## 
-##              Df Sum of Sq    RSS    AIC
-## - population  1   0.40892 88.299 30.435
-## &lt;none&gt;                    87.890 32.203
+##           Df Sum of Sq    RSS     AIC
+## - income   1     0.011 22.921 -28.998
+## &lt;none&gt;                 22.911 -27.021
+## - frost    1     2.107 25.017 -24.623
+## - ln_pop   1     2.279 25.189 -24.280
+## - hs_grad  1     4.436 27.347 -20.172
+## - murder   1    33.706 56.616  16.214
 ## 
-## Step:  AIC=30.44
-## life_exp ~ 1
+## Step:  AIC=-29
+## life_exp ~ murder + hs_grad + ln_pop + frost
 ## 
-##              Df Sum of Sq    RSS    AIC
-## &lt;none&gt;                    88.299 30.435
-## + population  1   0.40892 87.890 32.203</code></pre>
+##           Df Sum of Sq    RSS     AIC
+## &lt;none&gt;                 22.921 -28.998
+## + income   1     0.011 22.911 -27.021
+## - frost    1     2.214 25.135 -26.387
+## - ln_pop   1     2.450 25.372 -25.920
+## - hs_grad  1     6.959 29.881 -17.741
+## - murder   1    34.109 57.031  14.578</code></pre>
 <pre class="r"><code>model2 &lt;- step(fit1, direction = &quot;backward&quot;)</code></pre>
-<pre><code>## Start:  AIC=32.2
-## life_exp ~ population
+<pre><code>## Start:  AIC=-27.02
+## life_exp ~ murder + hs_grad + ln_pop + frost + income
 ## 
-##              Df Sum of Sq    RSS    AIC
-## - population  1   0.40892 88.299 30.435
-## &lt;none&gt;                    87.890 32.203
+##           Df Sum of Sq    RSS     AIC
+## - income   1     0.011 22.921 -28.998
+## &lt;none&gt;                 22.911 -27.021
+## - frost    1     2.107 25.017 -24.623
+## - ln_pop   1     2.279 25.189 -24.280
+## - hs_grad  1     4.436 27.347 -20.172
+## - murder   1    33.706 56.616  16.214
 ## 
-## Step:  AIC=30.44
-## life_exp ~ 1</code></pre>
+## Step:  AIC=-29
+## life_exp ~ murder + hs_grad + ln_pop + frost
+## 
+##           Df Sum of Sq    RSS     AIC
+## &lt;none&gt;                 22.921 -28.998
+## - frost    1     2.214 25.135 -26.387
+## - ln_pop   1     2.450 25.372 -25.920
+## - hs_grad  1     6.959 29.881 -17.741
+## - murder   1    34.109 57.031  14.578</code></pre>
 <pre class="r"><code>model3 &lt;- step(fit_back, direction = &quot;forward&quot;)</code></pre>
 <pre><code>## Start:  AIC=-23.6
 ## life_exp ~ (states + population + income + illiteracy + murder + 

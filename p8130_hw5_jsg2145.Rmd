@@ -137,51 +137,88 @@ fit8 <- lm(life_exp ~ log(population), data = df)
 broom::tidy(fit8)$p.value[2]
 fit9 <- lm(life_exp ~ log(area), data = df)
 broom::tidy(fit9)$p.value[2]
-
-# murder has the lowest p-value
-
-forward1<-lm(life_exp ~ murder, data = state_data)
-broom::tidy(forward1)
-
-fit1 <- update(forward1, . ~ . + income)
-broom::tidy(fit1)$p.value[3] # 0.06663619
-
-fit2 <- update(forward1, . ~ . + ln_pop)
-broom::tidy(fit2)$p.value[3] # 0.04008758
-
-fit3 <- update(forward1, . ~ . + illiteracy)
-broom::tidy(fit3)$p.value[3] # 0.5429104
-
-fit4 <- update(forward1, . ~ . + hs_grad)
-broom::tidy(fit4)$p.value[3] # 0.009088366
-
-fit5 <- update(forward1, . ~ . + frost)
-broom::tidy(fit5)$p.value[3] # 0.03520523
-
-fit6 <- update(forward1, . ~ . + ln_area)
-broom::tidy(fit6)$p.value[3] # 0.1561891
 ```
 
 ```{r}
-# next highest p-value is hs_grad
+# murder has the lowest p-value
+
+forward1<-lm(life_exp ~ murder, data = df)
+broom::tidy(forward1)
+
+fit1 <- update(forward1, . ~ . + income)
+broom::tidy(fit1)$p.value[3]
+
+fit2 <- update(forward1, . ~ . + ln_pop)
+broom::tidy(fit2)$p.value[3]
+
+fit3 <- update(forward1, . ~ . + illiteracy)
+broom::tidy(fit3)$p.value[3]
+
+fit4 <- update(forward1, . ~ . + hs_grad)
+broom::tidy(fit4)$p.value[3] 
+
+fit5 <- update(forward1, . ~ . + frost)
+broom::tidy(fit5)$p.value[3] 
+
+fit6 <- update(forward1, . ~ . + ln_area)
+broom::tidy(fit6)$p.value[3] 
+```
+
+```{r}
+# next lowest p-value is hs_grad
 
 forward2 <- update(forward1, . ~ . + hs_grad)
 tidy(forward2)
 
-fit1 <- update(forward2, . ~ . + ln_population)
-tidy(fit1)$p.value[4] # 0.005516215
+fit1 <- update(forward2, . ~ . + ln_pop)
+tidy(fit1)$p.value[4] 
 
 fit2 <- update(forward2, . ~ . + income)
-tidy(fit2)$p.value[4] # 0.6924184
+tidy(fit2)$p.value[4] 
 
 fit3 <- update(forward2, . ~ . + illiteracy)
-tidy(fit3)$p.value[4] # 0.4094209
+tidy(fit3)$p.value[4] 
 
 fit4 <- update(forward2, . ~ . + frost)
-tidy(fit4)$p.value[4] # 0.006987727
+tidy(fit4)$p.value[4] 
 
 fit5 <- update(forward2, . ~ . + ln_area)
-tidy(fit5)$p.value[4] # 0.6634469
+tidy(fit5)$p.value[4] 
+```
+
+```{r}
+# next lowest p-value is the log of the population
+
+forward3 = update(forward2, . ~ . + ln_pop)
+tidy(forward3)
+
+fit1 <- update(forward3, . ~ . + income)
+tidy(fit1)$p.value[5]
+
+fit2 <- update(forward3, . ~ . + illiteracy)
+tidy(fit2)$p.value[5]
+
+fit3 <- update(forward3, . ~ . + frost)
+tidy(fit3)$p.value[5]
+
+fit4 <- update(forward3, . ~ . + ln_area)
+tidy(fit4)$p.value[5]
+```
+
+```{r}
+# next lowest p-value is frost
+
+forward4 = update(forward3, . ~ . + frost)
+tidy(forward4)
+
+fit1 <- update(forward4, . ~ . + income)
+tidy(fit1)$p.value[6] # 0.8868104
+
+fit2 <- update(forward4, . ~ . + illiteracy)
+tidy(fit2)$p.value[6] # 0.7542022
+
+fit3 <- update(forward4, . ~ . + ln_area)
+tidy(fit3)$p.value[6] # 0.5212581
 ```
 
 ```{r}
