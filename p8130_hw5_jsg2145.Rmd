@@ -12,6 +12,7 @@ library(faraway)
 library(arsenal)
 library(leaps)
 library(caret)
+library(broom)
 knitr::opts_chunk$set(
 	echo = TRUE,
 	warning = FALSE,
@@ -136,11 +137,54 @@ fit8 <- lm(life_exp ~ log(population), data = df)
 broom::tidy(fit8)$p.value[2]
 fit9 <- lm(life_exp ~ log(area), data = df)
 broom::tidy(fit9)$p.value[2]
+
+# murder has the lowest p-value
+
+forward1<-lm(life_exp ~ murder, data = state_data)
+broom::tidy(forward1)
+
+fit1 <- update(forward1, . ~ . + income)
+broom::tidy(fit1)$p.value[3] # 0.06663619
+
+fit2 <- update(forward1, . ~ . + ln_pop)
+broom::tidy(fit2)$p.value[3] # 0.04008758
+
+fit3 <- update(forward1, . ~ . + illiteracy)
+broom::tidy(fit3)$p.value[3] # 0.5429104
+
+fit4 <- update(forward1, . ~ . + hs_grad)
+broom::tidy(fit4)$p.value[3] # 0.009088366
+
+fit5 <- update(forward1, . ~ . + frost)
+broom::tidy(fit5)$p.value[3] # 0.03520523
+
+fit6 <- update(forward1, . ~ . + ln_area)
+broom::tidy(fit6)$p.value[3] # 0.1561891
 ```
 
 ```{r}
-forward1 <- update(fit2, . ~ . + population)
+# next highest p-value is hs_grad
 
+forward2 <- update(forward1, . ~ . + hs_grad)
+tidy(forward2)
+
+fit1 <- update(forward2, . ~ . + ln_population)
+tidy(fit1)$p.value[4] # 0.005516215
+
+fit2 <- update(forward2, . ~ . + income)
+tidy(fit2)$p.value[4] # 0.6924184
+
+fit3 <- update(forward2, . ~ . + illiteracy)
+tidy(fit3)$p.value[4] # 0.4094209
+
+fit4 <- update(forward2, . ~ . + frost)
+tidy(fit4)$p.value[4] # 0.006987727
+
+fit5 <- update(forward2, . ~ . + ln_area)
+tidy(fit5)$p.value[4] # 0.6634469
+```
+
+```{r}
 fit_back <- lm(life_exp ~ . -states -population -area, data = df)
 broom::tidy(fit_back) ## remove income
 fit_back2 <- lm(life_exp ~ . -states -population -area -income, data = df)
