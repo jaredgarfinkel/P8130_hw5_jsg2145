@@ -449,7 +449,7 @@ Centering the age of the property data using the mean does not change the adjust
 
 ```{r}
 rent_df_pwl = rent_df %>% 
-  mutate(age_pwl5  = (age - 6) * (age >= 6))
+  mutate(age_pwl5  = (age - 15) * (age >= 15))
 ```
 
 ```{r}
