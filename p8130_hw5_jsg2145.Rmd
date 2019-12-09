@@ -13,6 +13,7 @@ library(arsenal)
 library(leaps)
 library(caret)
 library(broom)
+library(modelr)
 knitr::opts_chunk$set(
 	echo = TRUE,
 	warning = FALSE,
@@ -83,6 +84,7 @@ df %>%
   ggplot(aes(x = life_exp)) + 
   geom_histogram(bins = 10)
 ```
+
 ```{r}
 skimr::skim(df)
 ```
@@ -370,3 +372,105 @@ full_model <- lm(life_exp ~ murder + hs_grad + ln_pop + frost, data = df)
 summary(full_model)
 ```
 
+Through automatic and criterion based model building procedures, it was determined that a final model including the murder rate, high school graduation rate, log of the state population, and mean number of days below freezing each year (frost days) could predict the life expectancy in a state with an adjusted r-squared of 0.77 $\pm$ 0.18. There was one leverage point that, when removed, caused one variable, frost days, to become not significant in the model. This indicates that there may be evidence that a model with three variables, murder rate, high_school graduation rate, and the log of the state population is the best model.
+
+## Problem 2
+
+```{r}
+rent_df <- read_csv("./CommercialProperties.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(rental_rate = rental_rate*1000) %>% 
+  rename(monthly = rental_rate)
+```
+
+```{r}
+skimr::skim(rent_df)
+```
+
+```{r}
+rent_df %>% 
+  ggplot(aes(x = age - (mean(age)))) +
+  geom_histogram()
+```
+
+
+
+```{r}
+fit_rent <- lm(monthly ~ ., data = rent_df)
+
+summary(fit_rent)
+```
+
+After fitting an initial model including all available variables, it appears that the age of the property, the taxes, and square footage are significantly associated with the outcome, monthly rent. However, the vacancy rate does not appear to be associated with the monthly rent.
+
+```{r}
+rent_df %>% 
+  ggplot(aes(x = age, y = monthly)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+```{r}
+rent_df %>% 
+  ggplot(aes(x = taxes, y = monthly)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+```
+
+```{r}
+rent_df %>% 
+  ggplot(aes(x = sq_footage, y = monthly)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+```
+
+Square footage and taxes appear to be directly related with the monthly rent of each property, while the age of the property might be slightly inversely related to the monthly rent. There appear to be mostly homes younger than five years old or older than ten years old in this data.
+
+```{r}
+fit_rent_sig <- lm(monthly ~ . -vacancy_rate, data = rent_df)
+
+summary(fit_rent_sig)
+```
+
+```{r}
+rent_df_tr <- rent_df %>% 
+  mutate(age_0 = age - mean(age),
+         age2 = age^2)
+fit_rent_0 = lm(monthly ~ age_0 + taxes + sq_footage, data = rent_df_tr) 
+fit_rent2  = lm(monthly ~ age2 + taxes + sq_footage, data = rent_df_tr)
+
+summary(fit_rent_0)
+summary(fit_rent2)
+```
+
+Centering the age of the property data using the mean does not change the adjusted r-squared, but using a higher order term does reduce the adjusted r-squared. For this reason, it may not be necessary to use one of these transformations. On the other hand, because there are appear to be two clusters of the ages of properties, it may make sense to use piecewise linear regression. We create a break at 10, as appears to be a visual break.
+
+```{r}
+rent_df_pwl = rent_df %>% 
+  mutate(age_pwl5  = (age - 6) * (age >= 6))
+```
+
+```{r}
+fit_pwl = lm(monthly ~ age + age_pwl5, data = rent_df_pwl)
+fit_lin_age = lm(monthly ~ age, data = rent_df_pwl)
+
+anova(fit_lin_age, fit_pwl)
+```
+
+```{r}
+summary(fit_pwl)
+```
+
+```{r}
+rent_df_pwl %>% 
+  gather_predictions(fit_lin_age, fit_pwl) %>% 
+  mutate(model = fct_inorder(model)) %>% 
+  ggplot(aes(x = age, y = monthly)) + 
+  geom_point(alpha = .5) +
+  geom_line(aes(y = pred), color = "red") + 
+  facet_grid(~model)
+```
+
+A piecewise linear model does not seem to improve the association between age and monthly rent. So, a model including all the significant variables is the recommended model for the relationship between monthly rent and other variables.
