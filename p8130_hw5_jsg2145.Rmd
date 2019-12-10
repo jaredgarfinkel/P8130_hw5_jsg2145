@@ -2,7 +2,7 @@
 title: "P8130_hw5_jsg2145"
 author: "Jared Garfinkel"
 date: "12/6/2019"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -15,8 +15,9 @@ library(caret)
 library(broom)
 library(modelr)
 knitr::opts_chunk$set(
-	echo = TRUE,
+	echo = FALSE,
 	warning = FALSE,
+	message = FALSE,
 	fig.width = 8, 
   fig.height = 6,
   out.width = "90%"
@@ -71,7 +72,7 @@ my_controls <- tableby.control(
                medianq1q3 = "Median (Q1, Q3)",
                range = "Min - Max"))
 
-tab2 <- tableby( ~ population + income + illiteracy + life_exp + murder + hs_grad + frost + area, data=df, control=my_controls)
+tab2 <- tableby( ~ population + income + illiteracy + life_exp + murder + hs_grad + frost + area, data=df, control = my_controls)
 
 summary(tab2, title = "Descriptive Statistics: Life Expectancy Data", labelTranslations = my_labels, text=T) %>% 
   data.frame() %>% 
@@ -85,7 +86,7 @@ df %>%
   geom_histogram(bins = 10)
 ```
 
-```{r}
+```{r, results = "hide"}
 skimr::skim(df)
 ```
 
@@ -120,7 +121,7 @@ df <- df %>%
          ln_area = log(area))
 ```
 
-```{r}
+```{r, results = "hide"}
 fit1 <- lm(life_exp ~ population, data = df)
 broom::tidy(fit1)$p.value[2]
 fit2 <- lm(life_exp ~ murder, data = df)
@@ -141,7 +142,7 @@ fit9 <- lm(life_exp ~ log(area), data = df)
 broom::tidy(fit9)$p.value[2]
 ```
 
-```{r}
+```{r, results = "hide"}
 # murder has the lowest p-value
 
 forward1<-lm(life_exp ~ murder, data = df)
@@ -166,7 +167,7 @@ fit6 <- update(forward1, . ~ . + ln_area)
 broom::tidy(fit6)$p.value[3] 
 ```
 
-```{r}
+```{r, results = "hide"}
 # next lowest p-value is hs_grad
 
 forward2 <- update(forward1, . ~ . + hs_grad)
@@ -188,7 +189,7 @@ fit5 <- update(forward2, . ~ . + ln_area)
 tidy(fit5)$p.value[4] 
 ```
 
-```{r}
+```{r, results = "hide"}
 # next lowest p-value is the log of the population
 
 forward3 = update(forward2, . ~ . + ln_pop)
@@ -207,7 +208,7 @@ fit4 <- update(forward3, . ~ . + ln_area)
 tidy(fit4)$p.value[5]
 ```
 
-```{r}
+```{r, results = "hide"}
 # next lowest p-value is frost
 
 forward4 = update(forward3, . ~ . + frost)
@@ -223,7 +224,7 @@ fit3 <- update(forward4, . ~ . + ln_area)
 tidy(fit3)$p.value[6] # 0.5212581
 ```
 
-```{r}
+```{r, results = "hide"}
 fit_back <- lm(life_exp ~ . -states -population -area, data = df)
 broom::tidy(fit_back) ## remove income
 fit_back2 <- lm(life_exp ~ . -states -population -area -income, data = df)
@@ -259,10 +260,9 @@ summary(fit)
 model1 <- step(fit1, direction = "both")
 model2 <- step(fit1, direction = "backward")
 model3 <- step(fit_back, direction = "forward")
-model2 <- step
 ```
 
-```{r}
+```{r, include = FALSE}
 output = vector(mode = "list", length = 7)
 
 df = df %>% 
@@ -383,9 +383,16 @@ rent_df <- read_csv("./CommercialProperties.csv") %>%
   rename(monthly = rental_rate)
 ```
 
-```{r}
+```{r, results = "hide"}
 skimr::skim(rent_df)
 ```
+
+```{r}
+rent_df %>% 
+  ggplot(aes(x = monthly)) +
+  geom_histogram(bins = 10)
+```
+
 
 ```{r}
 rent_df %>% 
@@ -445,18 +452,17 @@ summary(fit_rent_0)
 summary(fit_rent2)
 ```
 
-Centering the age of the property data using the mean does not change the adjusted r-squared, but using a higher order term does reduce the adjusted r-squared. For this reason, it may not be necessary to use one of these transformations. On the other hand, because there are appear to be two clusters of the ages of properties, it may make sense to use piecewise linear regression. We create a break at 10, as appears to be a visual break.
+Centering the age of the property data using the mean does not change the adjusted r-squared, but using a higher order term does reduce the adjusted r-squared. For this reason, it may not be necessary to use one of these transformations. On the other hand, because there are appear to be two clusters of the ages of properties, it may make sense to use piecewise linear regression. We create a break at 2 and 15.
 
 ```{r}
 rent_df_pwl = rent_df %>% 
-  mutate(age_pwl5  = (age - 15) * (age >= 15))
+  mutate(age_pwl2  = (age - 2) * (age >= 2),
+         age_pwl15 = (age - 15) * (age >= 15))
 ```
 
 ```{r}
-fit_pwl = lm(monthly ~ age + age_pwl5, data = rent_df_pwl)
+fit_pwl = lm(monthly ~ age + age_pwl2 + age_pwl15, data = rent_df_pwl)
 fit_lin_age = lm(monthly ~ age, data = rent_df_pwl)
-
-anova(fit_lin_age, fit_pwl)
 ```
 
 ```{r}
@@ -473,4 +479,42 @@ rent_df_pwl %>%
   facet_grid(~model)
 ```
 
-A piecewise linear model does not seem to improve the association between age and monthly rent. So, a model including all the significant variables is the recommended model for the relationship between monthly rent and other variables.
+```{r}
+cv_df =
+  crossv_mc(rent_df_pwl, 100) %>% 
+  mutate(
+    train = map(train, as_tibble),
+    test = map(test, as_tibble))
+```
+
+```{r}
+cv_df = 
+  cv_df %>% 
+  mutate(linear_mod  = map(train, ~lm(monthly ~ age, data = .x)), 
+         pwl_mod     = map(train, ~lm(monthly ~ age + age_pwl2 + age_pwl15, data = .x))) %>% 
+  mutate(rmse_linear = map2_dbl(linear_mod, test, ~rmse(model = .x, data = .y)),
+         rmse_pwl    = map2_dbl(pwl_mod, test, ~rmse(model = .x, data = .y)))
+```
+
+
+```{r}
+cv_df %>% 
+  select(starts_with("rmse")) %>% 
+pivot_longer(
+    everything(),
+    names_to = "model", 
+    values_to = "rmse",
+    names_prefix = "rmse_") %>% 
+  mutate(model = fct_inorder(model)) %>% 
+  ggplot(aes(x = model, y = rmse)) + 
+  geom_violin()
+```
+
+```{r}
+final_model <- lm(monthly ~ . -vacancy_rate, data = rent_df)
+
+summary(final_model)
+```
+
+
+Based on RMSE, there a piecewise linear model does not improve the association between age and monthly rent. So, a more parsimonious model including all the significant variables is the recommended model for the relationship between monthly rent and other variables. The model accounts for about 57% of the variability in the monthly rental. This means that there are other factors that account for over 40% of the variability in monthly rent prices for the homes in the dataset. The final model states that for each year a property grows older, the monthly rent falls 144 dollars holding taxes and square footage constant. For each unit rise in taxes, the monthly rent rises 267 dollars holding the age and square footage of a home constant. And, for each hundred square feet, the monthly rent rises about 82 cents. 
